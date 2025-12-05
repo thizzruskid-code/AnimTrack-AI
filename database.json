@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1764735842554,
+    "projectName": "",
+    "episode": "",
+    "sceneId": "",
+    "shotId": "",
+    "prompt": "MAIN PROMPT:\n“Cinematic sci-fi animation of Fluffy Bear, the gray tabby astronaut from the reference image, standing in zero-gravity inside a sleek sci-fi starship airlock. She smiles warmly and gently waves as if welcoming the audience to space. After a beat, she tucks her paws, rotates forward into a smooth, controlled front flip, and lands softly in a stable floating pose. Her fur shifts subtly with motion; her spacesuit responds with soft fabric movement. Helmet reflections show star-fields and blue ship lights. Add subtle particle drift, floating dust, and soft rim lighting from the ship interior. Maintain her heroic, adorable presence. Painterly realism consistent with the reference image.”\n\nMOTION DIRECTIVES:\n• Start: slow float + subtle wave\n• Mid: clean front flip with stable rotation\n• End: soft landing pose, slight head tilt\n• No camera shake; steady cinematic framing\n• Motion smooth, playful, confident\n• Minimal exaggerated squash/stretch to keep realism\n• Zero-gravity physics consistent throughout\n\nSTYLE / LOOK:\n• Same character, same spacesuit, same helmet as the reference\n• High-detail sci-fi lighting\n• Rich contrast, reflective glass dome, soft shadows\n• Painterly realistic WAN 2.2 look\n\nNEGATIVE PROMPT:\n“no distortion, no warping, no extra limbs, no stretched helmet, no cartoon proportions, no flicker, no face morphing, no extra eyes, no text, no labels, no low-res, no jittery motion, no camera spin.”",
+    "notes": "",
+    "status": "new",
+    "stillUrls": [
+      "http://localhost:3001/uploads/captin_bear_1764735866008.png"
+    ],
+    "videoUrl": "http://localhost:3001/uploads/ComfyUI_00060__1764736001621.mp4",
+    "createdAt": "2025-12-03T04:24:02.554Z",
+    "updatedAt": "2025-12-03T04:26:58.768Z"
+  }
+]

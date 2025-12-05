@@ -1,0 +1,76 @@
+/* -------------------------------------------
+   AssetTable.css
+   Full stylesheet for the table component
+   GTI Studios Theme — Indigo / Deep Navy
+-------------------------------------------- */
+
+/* Table container */
+.asset-table {
+  width: 100%;
+  margin-top: 24px;
+  border-collapse: collapse;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+/* Table header */
+.asset-table thead {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.asset-table th {
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Table body cells */
+.asset-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Hover highlight */
+.asset-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Preview thumbnail (if added later) */
+.preview-img,
+.preview-thumb {
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Links inside the table */
+.asset-table a {
+  color: #60a5fa; /* GTI neon blue */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.asset-table a:hover {
+  text-decoration: underline;
+}
+
+/* Edit button */
+.edit-btn {
+  background: #4f46e5;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #4338ca;
+}

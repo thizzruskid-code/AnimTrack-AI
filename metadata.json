@@ -1,0 +1,5 @@
+{
+  "name": "AnimTrack AI",
+  "description": "An intelligent animation asset tracker that uses Gemini AI to organize shots, prompts, scene details, and lip-sync information into a structured, spreadsheet-like database.",
+  "requestFramePermissions": []
+}

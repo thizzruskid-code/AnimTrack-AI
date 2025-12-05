@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global layout */
+body {
+  @apply bg-[#0d1117] text-gray-200 font-sans;
+}
+
+/* Layout containers */
+.app-container {
+  @apply max-w-7xl mx-auto p-6;
+}
+
+.header-bar {
+  @apply flex items-center gap-4 mb-6;
+}
+
+.header-logo {
+  @apply h-10 w-auto rounded-md shadow-md;
+}
+
+.header-title {
+  @apply text-2xl font-bold tracking-tight;
+}
+
+.top-controls {
+  @apply flex gap-3 mt-4;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-500;
+}
+
+.btn-secondary {
+  @apply bg-gray-700 text-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-gray-600;
+}
+
+/* Grid layout */
+.main-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6;
+}
+
+/* Edit panel */
+.edit-panel {
+  @apply bg-[#161b22] p-6 rounded-xl shadow-lg border border-gray-700;
+}
+
+.edit-panel-title {
+  @apply text-xl font-semibold mb-1;
+}
+
+.edit-panel-subtitle {
+  @apply text-sm text-gray-400 mb-4;
+}
+
+.form-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+.form-field label {
+  @apply block text-sm font-medium text-gray-300 mb-1;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  @apply w-full bg-[#0d1117] border border-gray-700 rounded-lg px-3 py-2 text-gray-200;
+}
+
+.form-field textarea {
+  @apply h-28 resize-none;
+}
+
+.form-help {
+  @apply text-xs text-gray-500 mt-1;
+}
+
+.form-footer {
+  @apply mt-6 flex justify-end gap-4;
+}
+
+.btn-save {
+  @apply bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500;
+}
+
+.btn-quiet {
+  @apply bg-gray-700 text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-600;
+}
+
+/* Asset table */
+.asset-panel {
+  @apply bg-[#161b22] p-6 rounded-xl shadow-lg border border-gray-700 h-full;
+}
+
+.asset-panel-header {
+  @apply mb-4;
+}
+
+.asset-panel-title {
+  @apply text-xl font-semibold;
+}
+
+.asset-panel-subtitle {
+  @apply text-sm text-gray-400;
+}
+
+.asset-empty {
+  @apply text-center py-10 text-gray-400;
+}
+
+.asset-table-wrapper {
+  @apply overflow-auto rounded-lg border border-gray-700;
+}
+
+.asset-table {
+  @apply w-full text-sm;
+}
+
+.asset-table th {
+  @apply px-3 py-2 bg-[#0d1117] border-b border-gray-800 text-left text-gray-300;
+}
+
+.asset-table td {
+  @apply px-3 py-3 border-b border-gray-800;
+}
+
+.asset-row-edit-btn {
+  @apply bg-indigo-600 text-white px-3 py-1 rounded-md hover:bg-indigo-500;
+}
+
+/* Status tags */
+.asset-row-status {
+  @apply px-2 py-1 rounded-md text-xs font-semibold;
+}
+
+.asset-row-status-new {
+  @apply bg-green-700/40 text-green-300;
+}
+
+.asset-row-status-other {
+  @apply bg-yellow-700/40 text-yellow-300;
+}
