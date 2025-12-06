@@ -1,5 +1,5 @@
-// App.tsx
 import React, { useEffect, useState } from "react";
+
 import {
   Asset,
   loadLocalAssets,
@@ -17,208 +17,231 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // ------------------------------
-  // INITIAL LOAD FROM LOCAL
-  // ------------------------------
+  const [search, setSearch] = useState("");
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" | null } | null>(null);
+
+  // INITIAL LOAD
   useEffect(() => {
     const local = loadLocalAssets();
-    if (local.length > 0) {
-      setAssets(local);
-      setStatus("Loaded assets from local storage.");
-    } else {
-      setStatus("Local load: no saved assets found.");
-    }
+    if (local.length > 0) setAssets(local);
   }, []);
 
-  // ------------------------------
-  // AUTO-SAVE TO LOCAL
-  // ------------------------------
-  useEffect(() => {
-    saveLocalAssets(assets);
-  }, [assets]);
-
-  // ------------------------------
-  // LOCAL LOAD BUTTON
-  // ------------------------------
   const handleLocalLoad = () => {
     const local = loadLocalAssets();
     setAssets(local);
-    setSelected(null);
-    setStatus(
-      local.length > 0
-        ? `Local load successful: ${local.length} assets.`
-        : "Local load: no saved assets found."
-    );
+    setStatus("Loaded from local storage.");
   };
 
-  // ------------------------------
-  // LOAD FROM SHEETS
-  // ------------------------------
   const handleLoadFromSheets = async () => {
-    setIsSyncing(true);
-    setStatus("Loading from Sheets...");
     try {
-      const sheetAssets = await loadFromSheets();
-      setAssets(sheetAssets);
-      setSelected(null);
-      setStatus(`Loaded ${sheetAssets.length} assets from Sheets.`);
-    } catch (err: any) {
+      setIsSyncing(true);
+      const data = await loadFromSheets();
+      setAssets(data);
+      saveLocalAssets(data);
+      setStatus("Loaded from Google Sheets.");
+    } catch (err) {
       console.error(err);
-      setStatus(`Error loading from Sheets: ${err.message ?? "check console."}`);
+      setStatus("Error loading from Sheets.");
     } finally {
       setIsSyncing(false);
     }
   };
 
-  // ------------------------------
-  // SAVE TO SHEETS
-  // ------------------------------
   const handleSaveToSheets = async () => {
-    if (assets.length === 0) {
-      setStatus("No assets to save.");
-      return;
-    }
-
-    setIsSyncing(true);
-    setStatus("Saving to Sheets...");
     try {
+      setIsSyncing(true);
       await copyToSheets(assets);
-      setStatus(`Saved ${assets.length} assets to Google Sheets.`);
-    } catch (err: any) {
+      setStatus("Saved to Google Sheets.");
+    } catch (err) {
       console.error(err);
-      setStatus(`Error saving to Sheets: ${err.message ?? "check console."}`);
+      setStatus("Error saving to Sheets.");
     } finally {
       setIsSyncing(false);
     }
   };
 
-  // ------------------------------
-  // CRUD HANDLERS
-  // ------------------------------
+  const handleAssetUpdated = (updated: Asset) => {
+    const updatedList = assets.map((a, idx) => {
+      if (a.id !== undefined && updated.id !== undefined) {
+        return a.id === updated.id ? updated : a;
+      }
+      return idx === assets.indexOf(selected as Asset) ? updated : a;
+    });
 
-  // C: Add new entry
-  const handleAdd = () => {
-    setSelected({
-      id: undefined,
+    setAssets(updatedList);
+    saveLocalAssets(updatedList);
+    setSelected(updated);
+  };
+
+  const handleNewEntry = () => {
+    const newAsset: Asset = {
+      id: Date.now(),
       project: "",
       episode: "",
       scene: "",
       shot: "",
-      status: "New",
+      status: "",
       notes: "",
       stills: [],
       video: null,
-    });
+    };
+    setAssets((prev) => [...prev, newAsset]);
+    setSelected(newAsset);
   };
 
-  // R: Select existing row
-  const handleSelectAsset = (asset: Asset) => {
-    setSelected(asset);
-  };
+  const handleDelete = async () => {
+    if (!selected) return;
 
-  // U: Save (create or update)
-  const handleSaveAsset = (updated: Asset) => {
-    setAssets((prev) => {
-      const id = updated.id ?? String(Date.now());
-      const withId: Asset = { ...updated, id };
-
-      const idx = prev.findIndex((a) => a.id === id);
-      if (idx === -1) return [...prev, withId];
-
-      const next = [...prev];
-      next[idx] = withId;
-      return next;
-    });
-
+    const filtered = assets.filter((a) => a.id !== selected.id);
+    setAssets(filtered);
+    saveLocalAssets(filtered);
     setSelected(null);
-    setStatus("Asset saved locally. Use 'Save to Sheets' to sync.");
-  };
 
-  // D: Delete asset (local)
-  const handleDeleteAsset = (asset: Asset) => {
-    setAssets((prev) => prev.filter((a) => a.id !== asset.id));
-    if (selected && selected.id === asset.id) {
-      setSelected(null);
+    try {
+      setIsSyncing(true);
+      await copyToSheets(filtered);
+      setStatus("Deleted and synced to Google Sheets.");
+    } catch (err) {
+      console.error(err);
+      setStatus("Error syncing deletion to Sheets.");
+    } finally {
+      setIsSyncing(false);
     }
-    setStatus("Asset deleted locally. Use 'Save to Sheets' to sync.");
   };
 
-  const handleCancelEdit = () => {
-    setSelected(null);
+  // SEARCH
+  const filtered = assets.filter((a) => {
+    const t = search.toLowerCase();
+    return (
+      a.project?.toLowerCase().includes(t) ||
+      a.episode?.toLowerCase().includes(t) ||
+      a.scene?.toLowerCase().includes(t) ||
+      a.shot?.toLowerCase().includes(t) ||
+      a.status?.toLowerCase().includes(t) ||
+      a.notes?.toLowerCase().includes(t)
+    );
+  });
+
+  // SORTING LOGIC
+  const sortedAssets = React.useMemo(() => {
+    if (!sortConfig || !sortConfig.key || !sortConfig.direction) return filtered;
+
+    const sorted = [...filtered].sort((a: any, b: any) => {
+      const valA = a[sortConfig.key] ?? "";
+      const valB = b[sortConfig.key] ?? "";
+
+      if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  }, [filtered, sortConfig]);
+
+  const handleSort = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      setSortConfig({ key, direction: "asc" });
+    } else if (sortConfig.direction === "asc") {
+      setSortConfig({ key, direction: "desc" });
+    } else {
+      setSortConfig({ key: key, direction: null });
+    }
   };
 
-  // ------------------------------
-  // RENDER
-  // ------------------------------
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col">
-      <header className="border-b border-slate-800 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">
-          AnimTrack AI – Asset &amp; Sheet Sync
-        </h1>
+    <div className="min-h-screen bg-[#0d0f12] text-slate-100">
+      <div className="max-w-6xl mx-auto px-4 py-6">
 
-        <div className="flex gap-2 text-xs">
-          <button
-            onClick={handleAdd}
-            className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700"
-          >
-            Add Animation Entry
-          </button>
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">AnimTrack AI</h1>
+            <p className="text-sm text-slate-400">GTI Shot & Scene Tracker</p>
+          </div>
+        </header>
 
-          <button
-            onClick={handleLocalLoad}
-            className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700"
-          >
-            Local Load
-          </button>
+        {status && (
+          <div className="mt-4 border border-slate-800 bg-slate-950/70 px-3 py-2 rounded-lg text-xs">
+            {status}
+          </div>
+        )}
 
-          <button
-            disabled={isSyncing}
-            onClick={handleLoadFromSheets}
-            className="px-3 py-1 rounded bg-sky-700 hover:bg-sky-600 disabled:opacity-50"
-          >
-            {isSyncing ? "Loading..." : "Load from Sheets"}
-          </button>
+        {/* LAYOUT */}
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[340px,1fr]">
 
-          <button
-            disabled={isSyncing}
-            onClick={handleSaveToSheets}
-            className="px-3 py-1 rounded bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50"
-          >
-            {isSyncing ? "Saving..." : "Save to Sheets"}
-          </button>
+          {/* LEFT PANEL */}
+          <div className="space-y-4">
+
+            {/* Controls */}
+            <div className="p-4 rounded-xl border border-slate-800 bg-[#1a1d22] shadow-lg">
+              <h2 className="text-sm font-semibold">Controls</h2>
+
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleNewEntry}
+                  className="col-span-2 rounded-lg bg-slate-100 text-slate-900 px-3 py-2 text-sm hover:bg-white"
+                >
+                  + Add Entry
+                </button>
+
+                <button
+                  onClick={handleLocalLoad}
+                  className="rounded-lg bg-slate-900/80 border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800"
+                >
+                  Local Load
+                </button>
+
+                <button
+                  onClick={handleSaveToSheets}
+                  className="rounded-lg bg-slate-900/80 border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800"
+                >
+                  Save Sheets
+                </button>
+
+                <button
+                  onClick={handleLoadFromSheets}
+                  className="col-span-2 rounded-lg bg-slate-900/80 border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800"
+                >
+                  Load Sheets
+                </button>
+              </div>
+            </div>
+
+            {/* Edit Panel */}
+            {selected && (
+              <div className="p-4 rounded-xl border border-slate-800 bg-[#1a1d22] shadow-lg">
+                <EditPanel
+                  asset={selected}
+                  onAssetUpdated={handleAssetUpdated}
+                  close={() => setSelected(null)}
+                  onDelete={handleDelete}
+                />
+              </div>
+            )}
+
+          </div>
+
+          {/* RIGHT PANEL */}
+          <div className="p-4 rounded-xl border border-slate-800 bg-[#1a1d22] shadow-lg">
+
+            {/* Search */}
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search shots, scenes, notes…"
+              className="w-full mb-4 rounded-md border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm focus:ring-1 focus:ring-purple-500"
+            />
+
+            <AssetTable
+              assets={sortedAssets}
+              setSelected={setSelected}
+              onSort={handleSort}
+              sortConfig={sortConfig}
+            />
+
+          </div>
         </div>
-      </header>
 
-      {status && (
-        <div className="px-4 py-2 border-b border-slate-800 text-xs bg-slate-900/70">
-          {status}
-        </div>
-      )}
-
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 p-4">
-        <section className="border border-slate-800 rounded-lg p-3 bg-slate-900/60">
-          <h2 className="text-sm font-semibold mb-2">Edit Panel</h2>
-
-          <EditPanel
-            initialAsset={selected}
-            onSave={handleSaveAsset}
-            onCancel={handleCancelEdit}
-          />
-        </section>
-
-        <section className="border border-slate-800 rounded-lg p-3 bg-slate-900/60 overflow-hidden">
-          <h2 className="text-sm font-semibold mb-2">
-            Assets ({assets.length})
-          </h2>
-
-          <AssetTable
-            assets={assets}
-            onSelect={handleSelectAsset}
-            onDelete={handleDeleteAsset}
-          />
-        </section>
-      </main>
+      </div>
     </div>
   );
 };

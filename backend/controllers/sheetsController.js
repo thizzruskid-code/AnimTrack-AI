@@ -1,28 +1,34 @@
 // backend/controllers/sheetsController.js
+import {
+  readSheetRows,
+  writeSheetRows,
+} from "../services/googleSheetsService.js";
 
-import { getSheetData, saveSheetData } from "../services/googleSheetsService.js";
-
-export const loadFromSheets = async (req, res) => {
+// Load assets from Google Sheets
+export async function getSheetAssets(req, res) {
   try {
-    const result = await getSheetData();
-    return res.json(result);
+    const rows = await readSheetRows();
+    return res.json({ success: true, assets: rows });
   } catch (err) {
-    console.error("Sheets load error:", err);
-    return res.status(500).json({ success: false, error: "Sheets load failed" });
+    console.error("Sheets GET error:", err);
+    return res.status(500).json({
+      success: false,
+      error: "Failed to fetch Google Sheet",
+    });
   }
-};
+}
 
-export const saveToSheets = async (req, res) => {
+// Overwrite sheet with new asset rows
+export async function overwriteSheetAssets(req, res) {
   try {
-    const assets = req.body.assets;
-    if (!assets || !Array.isArray(assets)) {
-      return res.status(400).json({ success: false, error: "Invalid asset data" });
-    }
-
-    const result = await saveSheetData(assets);
-    return res.json(result);
+    const assets = req.body.assets || [];
+    await writeSheetRows(assets);
+    return res.json({ success: true });
   } catch (err) {
-    console.error("Sheets save error:", err);
-    return res.status(500).json({ success: false, error: "Sheets save failed" });
+    console.error("Sheets UPLOAD error:", err);
+    return res.status(500).json({
+      success: false,
+      error: "Failed to write to Google Sheet",
+    });
   }
-};
+}

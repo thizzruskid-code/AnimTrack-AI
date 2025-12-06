@@ -1,143 +1,109 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* GLOBAL RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-/* Global layout */
+/* FULL PAGE BACKGROUND */
 body {
-  @apply bg-[#0d1117] text-gray-200 font-sans;
+  background-color: #0d0d0d;
+  color: #ffffff;
 }
 
-/* Layout containers */
-.app-container {
-  @apply max-w-7xl mx-auto p-6;
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0d0d0d;
+  padding: 20px;
 }
 
-.header-bar {
-  @apply flex items-center gap-4 mb-6;
-}
-
-.header-logo {
-  @apply h-10 w-auto rounded-md shadow-md;
-}
-
-.header-title {
-  @apply text-2xl font-bold tracking-tight;
-}
-
-.top-controls {
-  @apply flex gap-3 mt-4;
-}
-
-.btn-primary {
-  @apply bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-500;
-}
-
-.btn-secondary {
-  @apply bg-gray-700 text-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-gray-600;
-}
-
-/* Grid layout */
-.main-grid {
-  @apply grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6;
-}
-
-/* Edit panel */
-.edit-panel {
-  @apply bg-[#161b22] p-6 rounded-xl shadow-lg border border-gray-700;
-}
-
-.edit-panel-title {
-  @apply text-xl font-semibold mb-1;
-}
-
-.edit-panel-subtitle {
-  @apply text-sm text-gray-400 mb-4;
-}
-
-.form-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
-}
-
-.form-field label {
-  @apply block text-sm font-medium text-gray-300 mb-1;
-}
-
-.form-field input,
-.form-field textarea,
-.form-field select {
-  @apply w-full bg-[#0d1117] border border-gray-700 rounded-lg px-3 py-2 text-gray-200;
-}
-
-.form-field textarea {
-  @apply h-28 resize-none;
-}
-
-.form-help {
-  @apply text-xs text-gray-500 mt-1;
-}
-
-.form-footer {
-  @apply mt-6 flex justify-end gap-4;
-}
-
-.btn-save {
-  @apply bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500;
-}
-
-.btn-quiet {
-  @apply bg-gray-700 text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-600;
-}
-
-/* Asset table */
-.asset-panel {
-  @apply bg-[#161b22] p-6 rounded-xl shadow-lg border border-gray-700 h-full;
-}
-
-.asset-panel-header {
-  @apply mb-4;
-}
-
-.asset-panel-title {
-  @apply text-xl font-semibold;
-}
-
-.asset-panel-subtitle {
-  @apply text-sm text-gray-400;
-}
-
-.asset-empty {
-  @apply text-center py-10 text-gray-400;
-}
-
+/* TOP BAR / TABLE WRAPPER */
 .asset-table-wrapper {
-  @apply overflow-auto rounded-lg border border-gray-700;
+  background-color: #111;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  overflow-x: auto;
 }
 
-.asset-table {
-  @apply w-full text-sm;
+/* EDIT PANEL STYLING */
+.edit-panel {
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  padding: 24px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 0 12px rgba(0,0,0,0.4);
 }
 
-.asset-table th {
-  @apply px-3 py-2 bg-[#0d1117] border-b border-gray-800 text-left text-gray-300;
+.edit-panel h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: #e8e8e8;
 }
 
-.asset-table td {
-  @apply px-3 py-3 border-b border-gray-800;
+/* LABELS */
+.edit-panel label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #ccc;
 }
 
-.asset-row-edit-btn {
-  @apply bg-indigo-600 text-white px-3 py-1 rounded-md hover:bg-indigo-500;
+/* INPUTS AND TEXTAREA */
+.edit-panel input,
+.edit-panel textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #000;
 }
 
-/* Status tags */
-.asset-row-status {
-  @apply px-2 py-1 rounded-md text-xs font-semibold;
+/* FILE INPUT FIX */
+.edit-panel input[type="file"] {
+  padding: 4px;
+  background-color: #2b2b2b;
+  color: #ddd;
+  border: none;
 }
 
-.asset-row-status-new {
-  @apply bg-green-700/40 text-green-300;
+/* BUTTONS */
+button {
+  padding: 10px 18px;
+  margin-right: 12px;
+  background-color: #0066ff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
 }
 
-.asset-row-status-other {
-  @apply bg-yellow-700/40 text-yellow-300;
+button:hover {
+  background-color: #004ab3;
+}
+
+button.cancel {
+  background-color: #555;
+}
+
+button.cancel:hover {
+  background-color: #444;
+}
+
+/* STATUS MESSAGE */
+.status-message {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #70d6ff;
 }

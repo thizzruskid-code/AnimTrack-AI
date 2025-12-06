@@ -1,3 +1,4 @@
+// backend/server.js
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -8,7 +9,7 @@ import sheetsRoutes from "./routes/sheetsRoutes.js";
 
 const app = express();
 
-// Resolve __dirname in ES modules
+// Fix __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -16,20 +17,20 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded files statically
+// Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/upload", uploadRoutes);
 app.use("/sheets", sheetsRoutes);
 
-// Simple health check
+// Health endpoint
 app.get("/", (req, res) => {
   res.json({ status: "ok", message: "AnimTrack backend running" });
 });
 
+// Port
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => {
   console.log(`Backend running at http://localhost:${PORT}`);
 });
